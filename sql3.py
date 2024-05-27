@@ -2,8 +2,8 @@ import sqlite3
 import csv
 
 # Funksjon for å opprette tabeller
-def opprett_tabeller(conn):
-    var_cursor = conn.cursor()
+def funk_opprett_tabeller(var_conn):
+    var_cursor = var_conn.cursor()
     # Opprett kundeinfo tabell
     var_cursor.execute("""
     CREATE TABLE IF NOT EXISTS kundeinfo (
@@ -26,11 +26,11 @@ def opprett_tabeller(conn):
         Kategori TEXT
     )
     """)
-    conn.commit()
+    var_conn.commit()
 
 # Funksjon for å lese data fra kundeinfo CSV-fil og legge til i databasen
-def legg_til_data_fra_csv_kundeinfo(conn, filnavn):
-    var_cursor = conn.cursor()
+def funk_legg_til_data_fra_csv_kundeinfo(var_conn, filnavn):
+    var_cursor = var_conn.cursor()
     with open(filnavn, 'r', encoding='utf-8') as fil:
         var_reader = csv.reader(fil)
         next(var_reader)  # Hopper over header
@@ -38,11 +38,11 @@ def legg_til_data_fra_csv_kundeinfo(conn, filnavn):
             var_fornavn, var_etternavn, var_epost, var_telefon, var_postnummer = var_rad
             var_cursor.execute("INSERT INTO kundeinfo (fornavn, etternavn, epost, telefon, postnummer) VALUES (?, ?, ?, ?, ?)",
                            (var_fornavn, var_etternavn, var_epost, var_telefon, var_postnummer))
-    conn.commit()
+    var_conn.commit()
 
 # Funksjon for å lese data fra postnummer CSV-fil og legge til i databasen
-def legg_til_data_fra_csv_postnummer(conn, filnavn):
-    var_cursor = conn.cursor()
+def funk_legg_til_data_fra_csv_postnummer(var_conn, filnavn):
+    var_cursor = var_conn.cursor()
     with open(filnavn, 'r', encoding='utf-8') as fil:
         var_reader = csv.reader(fil, delimiter=';')
         next(var_reader)  # Hopper over header
@@ -50,20 +50,20 @@ def legg_til_data_fra_csv_postnummer(conn, filnavn):
             var_postnummer, var_poststed, var_kommunenummer, var_kommunenavn, var_kategori = var_rad
             var_cursor.execute("INSERT INTO postnummer_tabell (Postnummer, Poststed, Kommunenummer, Kommunenavn, Kategori) VALUES (?, ?, ?, ?, ?)",
                            (var_postnummer, var_poststed, var_kommunenummer, var_kommunenavn, var_kategori))
-    conn.commit()
+    var_conn.commit()
 
 # Funksjon for å koble til databasen
-def koble_til_database(database_navn):
+def funk_koble_til_database(database_navn):
     return sqlite3.connect(database_navn)
 
 # Funksjon for å lukke tilkoblingen til databasen
-def lukk_tilkobling(conn):
-    if conn:
-        conn.close()
+def funk_lukk_tilkobling(var_conn):
+    if var_conn:
+        var_conn.close()
 
 # Funksjon for å vise kundeinformasjon basert på kundenummer
-def vis_kundeinfo(conn, kundenummer):
-    var_cursor = conn.cursor()
+def funk_vis_kundeinfo(var_conn, kundenummer):
+    var_cursor = var_conn.cursor()
     var_cursor.execute("""
     SELECT k.*, p.Poststed, p.Kommunenummer, p.Kommunenavn, p.Kategori 
     FROM kundeinfo k
@@ -86,29 +86,29 @@ def vis_kundeinfo(conn, kundenummer):
         print("Kundenummer ikke funnet.")
 
 # Main funksjon
-def main():
-    var_database_navn = "min_database_sql3.db"
+def funk_main():
+    var_database_navn = "min_database.db"
     var_kundeinfo_csv_filnavn = "randoms.csv"
     var_postnummer_csv_filnavn = "Postnummerregister.csv"
 
     # Koble til databasen
-    var_conn = koble_til_database(var_database_navn)
+    var_conn = funk_koble_til_database(var_database_navn)
 
     # Opprett tabeller
-    opprett_tabeller(var_conn)
+    funk_opprett_tabeller(var_conn)
 
     # Legg inn data fra kundeinfo CSV-fil
-    legg_til_data_fra_csv_kundeinfo(var_conn, var_kundeinfo_csv_filnavn)
+    funk_legg_til_data_fra_csv_kundeinfo(var_conn, var_kundeinfo_csv_filnavn)
 
     # Legg inn data fra postnummer CSV-fil
-    legg_til_data_fra_csv_postnummer(var_conn, var_postnummer_csv_filnavn)
+    funk_legg_til_data_fra_csv_postnummer(var_conn, var_postnummer_csv_filnavn)
 
     # Spør brukeren om kundenummer og vis kundeinformasjon
     kundenummer = input("Vennligst oppgi kundenummer: ")
-    vis_kundeinfo(var_conn, kundenummer)
+    funk_vis_kundeinfo(var_conn, kundenummer)
 
     # Lukk koblingen til databasen
-    lukk_tilkobling(var_conn)
+    funk_lukk_tilkobling(var_conn)
 
 if __name__ == "__main__":
-    main()
+    funk_main()
