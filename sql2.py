@@ -2,7 +2,7 @@ import sqlite3
 import csv
 
 # Funksjon for å opprette tabeller
-def opprett_tabeller(conn):
+def funk_opprett_tabeller(conn):
     var_cursor = conn.cursor()
     # Opprett personer tabell
     var_cursor.execute("""
@@ -28,7 +28,7 @@ def opprett_tabeller(conn):
     conn.commit()
 
 # Funksjon for å lese data fra personer CSV-fil og legge til i databasen
-def legg_til_data_fra_csv_personer(conn, filnavn):
+def funk_legg_til_data_fra_csv_personer(conn, filnavn):
     var_cursor = conn.cursor()
     with open(filnavn, 'r', encoding='utf-8') as fil:
         var_reader = csv.reader(fil)
@@ -40,7 +40,7 @@ def legg_til_data_fra_csv_personer(conn, filnavn):
     conn.commit()
 
 # Funksjon for å lese data fra postnummer CSV-fil og legge til i databasen
-def legg_til_data_fra_csv_postnummer(conn, filnavn):
+def funk_legg_til_data_fra_csv_postnummer(conn, filnavn):
     var_cursor = conn.cursor()
     with open(filnavn, 'r', encoding='utf-8') as fil:
         var_reader = csv.reader(fil, delimiter=';')
@@ -52,11 +52,11 @@ def legg_til_data_fra_csv_postnummer(conn, filnavn):
     conn.commit()
 
 # Funksjon for å koble til databasen
-def koble_til_database(database_navn):
+def funk_koble_til_database(database_navn):
     return sqlite3.connect(database_navn)
 
 # Funksjon for å lukke tilkoblingen til databasen
-def lukk_tilkobling(conn):
+def funk_lukk_tilkobling(conn):
     if conn:
         conn.close()
 
@@ -67,19 +67,19 @@ def main():
     var_postnummer_csv_filnavn = "Postnummerregister.csv"
 
     # Koble til databasen
-    var_conn = koble_til_database(var_database_navn)
+    var_conn = funk_koble_til_database(var_database_navn)
 
     # Opprett tabeller
-    opprett_tabeller(var_conn)
+    funk_opprett_tabeller(var_conn)
 
     # Legg inn data fra personer CSV-fil
-    legg_til_data_fra_csv_personer(var_conn, var_personer_csv_filnavn)
+    funk_legg_til_data_fra_csv_personer(var_conn, var_personer_csv_filnavn)
 
     # Legg inn data fra postnummer CSV-fil
-    legg_til_data_fra_csv_postnummer(var_conn, var_postnummer_csv_filnavn)
+    funk_legg_til_data_fra_csv_postnummer(var_conn, var_postnummer_csv_filnavn)
 
     # Lukk koblingen til databasen
-    lukk_tilkobling(var_conn)
+    funk_lukk_tilkobling(var_conn)
 
 if __name__ == "__main__":
     main()
